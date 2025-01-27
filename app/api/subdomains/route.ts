@@ -31,6 +31,10 @@ async function fetchWithTimeout(
   }
 }
 
+interface Certificate {
+  name_value: string;
+}
+
 export async function GET() {
   try {
     const domain = "aaenz.no";
@@ -46,7 +50,7 @@ export async function GET() {
 
     // Deduplicate and filter subdomains
     const subdomains = new Set<string>();
-    data.forEach((cert: any) => {
+    data.forEach((cert: Certificate) => {
       const name = cert.name_value.toLowerCase();
       if (name.endsWith(domain) && name !== domain) {
         // Remove wildcard entries and clean the subdomain

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     clearTimeout(timeoutId);
     return NextResponse.json({ isOnline: response.ok });
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json({ isOnline: false });
   }
 }

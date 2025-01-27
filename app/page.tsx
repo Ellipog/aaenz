@@ -185,7 +185,8 @@ export default function Home() {
           isLoading: false,
         },
       }));
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Failed to fetch site title:", error);
       setSiteInfos((prev) => ({
         ...prev,
         [url]: {
