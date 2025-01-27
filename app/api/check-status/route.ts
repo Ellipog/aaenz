@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     clearTimeout(timeoutId);
     return NextResponse.json({ isOnline: response.ok });
   } catch (error: unknown) {
+    console.error("Failed to check site status:", error);
     return NextResponse.json({ isOnline: false });
   }
 }
