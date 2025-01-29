@@ -78,6 +78,7 @@ const SiteCard = ({
                 left: 0,
               }}
               sandbox="allow-same-origin allow-scripts"
+              allow="autoplay 'none'; microphone 'none'; camera 'none'"
               loading="lazy"
               onLoad={() => onLoad(subdomain)}
               onError={() => onError(subdomain)}
