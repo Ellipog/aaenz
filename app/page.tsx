@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { pins } from "@/static/pins";
+import { removed } from "@/static/removed";
 import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface SiteInfo {
@@ -224,8 +225,11 @@ export default function Home() {
 
   // Filter out pinned sites from subdomains
   const pinnedUrls = new Set(pins.map((pin) => new URL(pin.url).hostname));
+  const removedUrls = new Set(
+    removed.map((site) => new URL(site.url).hostname)
+  );
   const unpinnedSubdomains = subdomains.filter(
-    (subdomain) => !pinnedUrls.has(subdomain)
+    (subdomain) => !pinnedUrls.has(subdomain) && !removedUrls.has(subdomain)
   );
 
   return (
