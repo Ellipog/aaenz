@@ -79,6 +79,7 @@ const SiteCard = ({
                 left: 0,
               }}
               sandbox="allow-same-origin allow-scripts"
+              allow="autoplay 'none'; microphone 'none'; camera 'none'; speaker 'none'; geolocation 'none'; payment 'none'"
               loading="lazy"
               onLoad={() => onLoad(subdomain)}
               onError={() => onError(subdomain)}
@@ -105,13 +106,27 @@ const SiteCard = ({
             animate={{ y: 0, opacity: 1 }}
           >
             <div className="bg-white/95 dark:bg-gray-800/60 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col items-start">
-              <h3 className="text-sm md:text-base font-semibold text-gray-800 dark:text-white">
-                {siteInfo?.isLoading ? (
-                  <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-24" />
-                ) : (
-                  siteInfo?.title || subdomain
-                )}
-              </h3>
+              <div className="flex items-center gap-2">
+                <img
+                  src={`https://external-content.duckduckgo.com/ip3/${subdomain}.ico`}
+                  alt={`${subdomain} favicon`}
+                  className="w-4 h-4 object-contain"
+                  onError={(e) => {
+                    // Fallback to Favicon Kit if DuckDuckGo fails
+                    e.currentTarget.src = `https://api.faviconkit.com/${subdomain}/16`;
+                    e.currentTarget.onerror = () => {
+                      e.currentTarget.style.display = "none";
+                    };
+                  }}
+                />
+                <h3 className="text-sm md:text-base font-semibold text-gray-800 dark:text-white">
+                  {siteInfo?.isLoading ? (
+                    <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-24" />
+                  ) : (
+                    siteInfo?.title || subdomain
+                  )}
+                </h3>
+              </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 font-medium text-center">
                 {subdomain}
               </p>
