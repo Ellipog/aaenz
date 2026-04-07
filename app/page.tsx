@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import localFont from "next/font/local";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import ScrambleText from "@/app/components/ScrambleText";
 
 const nostrutaru = localFont({
@@ -13,8 +13,190 @@ const nostrutaru = localFont({
 
 type Phase = "intro" | "scrambling" | "reveal";
 
+type PortalLink = {
+  label: string;
+  href: string;
+  description?: string;
+  icon: "globe" | "code" | "pen" | "photo" | "music" | "mail" | "bolt";
+};
+
+function LinkIcon({ kind }: { kind: PortalLink["icon"] }) {
+  const common = "h-3.5 w-3.5 shrink-0 opacity-70";
+  switch (kind) {
+    case "globe":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M3 12h18"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+          <path
+            d="M12 3c2.8 2.6 4.5 5.9 4.5 9S14.8 18.4 12 21c-2.8-2.6-4.5-5.9-4.5-9S9.2 5.6 12 3Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "code":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M9 18 3 12l6-6"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M15 6l6 6-6 6"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "pen":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 20h9"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+          <path
+            d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "photo":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8.5 10.5h.01"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="m21 16-5.5-5.5L6 20"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "music":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M9 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M19 16a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M11 16V6l10-2v10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "mail":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="m5 8 7 6 7-6"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "bolt":
+      return (
+        <svg
+          className={common}
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M13 2 4 14h7l-1 8 10-14h-7l0-6Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+  }
+}
+
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("intro");
+  const [query, setQuery] = useState("");
 
   const engchars = useMemo(
     () => [
@@ -147,8 +329,78 @@ export default function Home() {
 
   const handleDone = useCallback(() => {
     setPhase("reveal");
-    console.log("doneea");
   }, []);
+
+  const groups = useMemo(() => {
+    return [
+      {
+        title: "sites",
+        items: [
+          {
+            label: "portfolio",
+            href: "https://portfolio.aaenz.no",
+            description: "ポートフォリオ",
+            icon: "globe",
+          },
+          {
+            label: "retro",
+            href: "https://myawesomecoolwebsite.aaenz.no/",
+            description: "懐かしい",
+            icon: "bolt",
+          },
+        ] satisfies PortalLink[],
+      },
+      {
+        title: "github repos",
+        items: [
+          {
+            label: "ccgpt",
+            href: "https://github.com/Ellipog/ccGPT",
+            description: "シシジーピーティー",
+            icon: "pen",
+          },
+        ] satisfies PortalLink[],
+      },
+      {
+        title: "socials",
+        items: [
+          {
+            label: "github",
+            href: "https://github.com/Ellipog",
+            description: "ギットハブ",
+            icon: "code",
+          },
+          {
+            label: "insta",
+            href: "https://www.instagram.com/ellipog/",
+            description: "インスタ",
+            icon: "photo",
+          },
+          {
+            label: "linkedin",
+            href: "https://www.linkedin.com/in/elliot-strand-aaen/",
+            description: "リンクトイン",
+            icon: "mail",
+          },
+        ] satisfies PortalLink[],
+      },
+    ] as const;
+  }, []);
+
+  const filteredGroups = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return groups;
+    return groups
+      .map((g) => ({
+        ...g,
+        items: g.items.filter((it) => {
+          const hay =
+            `${it.label} ${it.description ?? ""} ${it.href}`.toLowerCase();
+          return hay.includes(q);
+        }),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [groups, query]);
 
   return (
     <div
@@ -195,7 +447,65 @@ export default function Home() {
           animate={{ opacity: phase === "reveal" ? 1 : 0 }}
           exit={{ opacity: 0 }}
         >
-          <div className="text-white/70">More text here</div>
+          <div className="w-full max-w-3xl px-6">
+            <div className="flex items-center justify-between gap-6">
+              <div className="text-sm text-white/60 tracking-wide">
+                portal / directory
+              </div>
+              <label className="flex items-center gap-2 text-sm text-white/60">
+                <span className="sr-only">Filter links</span>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  inputMode="search"
+                  placeholder="search…"
+                  className="w-44 sm:w-56 bg-transparent text-white/80 placeholder:text-white/30 outline-none"
+                />
+              </label>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-x-10 gap-y-10">
+              {filteredGroups.map((group) => (
+                <section key={group.title} aria-label={group.title}>
+                  <div className="text-xs text-white/45 tracking-[0.22em] uppercase">
+                    {group.title}
+                  </div>
+                  <ul className="mt-3 space-y-2.5">
+                    {group.items.map((item) => (
+                      <li key={item.href}>
+                        <a
+                          href={item.href}
+                          className="group inline-flex items-baseline gap-2 text-white/80 hover:text-white transition-colors"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <span className="translate-y-px">
+                            <LinkIcon kind={item.icon} />
+                          </span>
+                          <span className="text-base leading-none">
+                            {item.label}
+                          </span>
+                          {item.description ? (
+                            <ScrambleText
+                              text={item.description}
+                              chars={jpchars}
+                              timeOffset={200}
+                              autoPlay={phase === "reveal"}
+                              className="text-sm text-white/35 group-hover:text-white/45 transition-colors"
+                            />
+                          ) : null}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+
+            {filteredGroups.length === 0 ? (
+              <div className="mt-10 text-sm text-white/45">no matches</div>
+            ) : null}
+          </div>
         </motion.div>
       </div>
     </div>
