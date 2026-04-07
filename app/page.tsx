@@ -365,6 +365,12 @@ export default function Home() {
             description: "シシジーピーティー",
             icon: "bolt",
           },
+          {
+            label: "wordle",
+            href: "https://github.com/Ellipog/wordle",
+            description: "ワールドル",
+            icon: "globe",
+          },
         ] satisfies PortalLink[],
       },
       {
