@@ -34,18 +34,24 @@
   }
 }
 
+/* 1. LOCK VIEWPORT: Prevents the transform from causing screen-wide overflow */
 html,
 body {
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  position: relative;
 }
 
-/* Remove ALL scrollbars (keep scrolling functional) */
+/* Remove ALL scrollbars (keep scrolling functional inside containers) */
 * {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -58,15 +64,22 @@ body {
   background: transparent;
 }
 
-/* CRT bending wrapper mounted in app/layout.tsx */
+/* 2. CONSTRAIN CONTENT: Ensure the "glass" doesn't exceed screen dimensions */
 .crt-content {
-  min-height: 100%;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  max-height: 100%;
+  overflow-y: auto; /* Content can still scroll inside the CRT effect */
+  box-sizing: border-box;
+  position: relative;
 }
 
 html.crt-on .crt-content {
+  /* Scale is set to 1.0 to prevent edges from pushing past the screen bounds during 3D rotation */
   transform: perspective(1400px) translateZ(var(--crt-bulge))
     rotateX(var(--crt-bend-tilt)) rotateY(calc(var(--crt-bend-tilt) * -1))
-    scale(1.01);
+    scale(1);
   transform-origin: 50% 50%;
   border-radius: var(--crt-bend-radius);
   overflow: clip;
@@ -94,14 +107,17 @@ html.crt-on .crt-content::before {
   mix-blend-mode: soft-light;
 }
 
-/* Fixed CRT overlay element mounted in app/layout.tsx */
+/* 3. OVERLAY: Fixed to viewport but clipped to screen */
 .crt-overlay {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
   transition: opacity 160ms ease;
+  overflow: hidden;
 }
 
 html.crt-on .crt-overlay {
@@ -196,29 +212,23 @@ html.crt-on body {
   filter: saturate(1.05) contrast(1.02);
 }
 
-/* Phosphor-style text glow:
-   Uses currentColor (so "whiter" text glows more), with a fallback. */
+/* Phosphor-style text glow */
 html.crt-on :where(p, span, a, li, h1, h2, h3, h4, h5, h6, label, button) {
   text-shadow:
-    /* broad bloom */
     0 0 18px rgba(255, 255, 255, 0.14),
     0 0 8px rgba(255, 255, 255, 0.18),
-    /* tighter core */ 0 0 2px rgba(255, 255, 255, 0.32),
-    /* subtle RGB fringing like phosphor triads */ -0.4px 0
-      rgba(0, 255, 120, 0.12),
+    0 0 2px rgba(255, 255, 255, 0.32),
+    -0.4px 0 rgba(0, 255, 120, 0.12),
     0.4px 0 rgba(255, 60, 60, 0.12);
 }
 
 @supports (color: color-mix(in srgb, white, black)) {
   html.crt-on :where(p, span, a, li, h1, h2, h3, h4, h5, h6, label, button) {
     text-shadow:
-      /* broad bloom */
       0 0 22px color-mix(in srgb, currentColor 32%, transparent),
       0 0 12px color-mix(in srgb, currentColor 40%, transparent),
-      /* tighter core */ 0 0 3px
-        color-mix(in srgb, currentColor 58%, transparent),
-      /* subtle RGB fringing like phosphor triads */ -0.4px 0
-        color-mix(in srgb, currentColor 26%, rgba(0, 255, 120, 0.18)),
+      0 0 3px color-mix(in srgb, currentColor 58%, transparent),
+      -0.4px 0 color-mix(in srgb, currentColor 26%, rgba(0, 255, 120, 0.18)),
       0.4px 0 color-mix(in srgb, currentColor 26%, rgba(255, 60, 60, 0.18));
   }
 }
