@@ -438,17 +438,17 @@ export default function Home() {
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
         >
           <ScrambleText
-            text="welcome home"
+            text="aaenz"
             chars={engchars}
-            timeOffset={60}
+            timeOffset={130}
             autoPlay={phase !== "intro"}
             onDone={handleDone}
             className="text-4xl text-white"
           />
           <ScrambleText
-            text="お帰りなさい"
+            text="オエンズ"
             chars={jpchars}
-            timeOffset={110}
+            timeOffset={180}
             className="text-2xl text-[#646464]"
           />
         </motion.div>
