@@ -343,6 +343,12 @@ export default function Home() {
             icon: "globe",
           },
           {
+            label: "tools",
+            href: "https://tools.aaenz.no",
+            description: "具",
+            icon: "bolt",
+          },
+          {
             label: "kana",
             href: "https://kana.aaenz.no",
             description: "かな練習",
