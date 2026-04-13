@@ -25,10 +25,12 @@ export const metadata: Metadata = {
     type: "website",
     title: "aaenz",
     siteName: "aaenz",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary",
     title: "aaenz",
+    images: ["/og-image.png"],
   },
 };
 
