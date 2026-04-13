@@ -343,9 +343,9 @@ export default function Home() {
             icon: "globe",
           },
           {
-            label: "tools",
-            href: "https://tools.aaenz.no",
-            description: "具",
+            label: "runen",
+            href: "https://runen.no",
+            description: "ルネン",
             icon: "bolt",
           },
           {
